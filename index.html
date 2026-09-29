@@ -268,15 +268,9 @@
     <label for="licKey" class="lbl keyfld">라이선스 키</label>
     <textarea id="licKey" class="keyfld" rows="3" spellcheck="false" placeholder="HS-XXXX-XXXX-XXXX-XXXX-XXXX" aria-describedby="licMsg"></textarea>
     <div class="licmsg" id="licMsg" role="alert"></div>
-    <div id="admBox" hidden>
-      <label for="admEmail" class="lbl">관리자 이메일</label><input id="admEmail" type="email" autocomplete="username" spellcheck="false">
-      <label for="admPw" class="lbl">비밀번호</label><input id="admPw" type="password" autocomplete="current-password">
-      <button type="button" class="tb main" id="admGo">로그인</button>
-    </div>
     <button type="submit" class="tb main keyfld" id="licBtn">인증하기</button>
     <noscript><p class="licmsg" style="display:block">이 화면에서는 스크립트가 막혀 있어요. 크롬·사파리 같은 브라우저에서 열어 주세요.</p></noscript>
     <p class="lichelp keyfld">키가 없으면 발급한 사람에게 문의하세요.</p>
-    <button type="button" class="lnk" id="admLink">관리자 로그인</button>
   </form>
   <div class="welcome" id="welcome" hidden aria-live="polite">
     <div class="logo" role="img" aria-label=""></div>
@@ -975,7 +969,7 @@ if(typeof document!=='undefined'){
   var ROLE={admin:'관리자',user:'일반 유저'};
   var $=function(id){return document.getElementById(id)};
   var lic=$('lic'), app=$('app'), form=$('licForm'), inp=$('licKey'), msg=$('licMsg'), btn=$('licBtn'),
-      wel=$('welcome'), wName=$('wName'), wRole=$('wRole'), admLink=$('admLink'), admBox=$('admBox');
+      wel=$('welcome'), wName=$('wName'), wRole=$('wRole');
   var RM=false; try{ RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches }catch(e){}
   function sleep(ms){ return new Promise(function(r){ setTimeout(r,RM?Math.min(ms,250):ms) }) }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k)||''; if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v) }catch(e){ return '' } }
@@ -1003,8 +997,8 @@ if(typeof document!=='undefined'){
     var id=normKey(raw);
     if(!/^[A-Z0-9]{20}$/.test(id)) return {err:'키 형식이 올바르지 않아요. 받은 키를 처음부터 끝까지 그대로 붙여넣었는지 확인하세요.'};
     var f; try{ f=await load() }catch(e){ return {net:true} }
-    var snap; try{ snap=await f.fs.getDoc(f.fs.doc(f.db,'licenses',id)) }catch(e){ return (e&&e.code==='permission-denied')?{err:'유효하지 않은 키예요.'}:{net:true} }
-    if(!snap.exists()) return {err:'유효하지 않은 키예요. 발급받은 키가 맞는지 확인하세요.'};
+    var snap; try{ snap=await f.fs.getDoc(f.fs.doc(f.db,'licenses',id)) }catch(e){ return (e&&e.code==='permission-denied')?{err:'유효하지 않은 키예요.',nf:true,key:id}:{net:true} }
+    if(!snap.exists()) return {err:'유효하지 않은 키예요. 발급받은 키가 맞는지 확인하세요.',nf:true,key:id};
     var d=snap.data();
     if(d.revoked) return {err:'사용이 중지된 키예요. 발급한 사람에게 문의하세요.'};
     if(d.exp){ var end=new Date(d.exp+'T23:59:59'); if(!isNaN(end)&&new Date()>end) return {err:'사용 기간이 끝난 키예요 ('+d.exp+'까지). 새 키를 받아 주세요.'} }
@@ -1042,9 +1036,9 @@ if(typeof document!=='undefined'){
   // ---- 키 입력 인증
   form.addEventListener('submit',async function(ev){
     ev.preventDefault();
-    if(!admBox.hidden) return;
     say(''); btn.disabled=true; btn.textContent='확인 중…';
     var r=await check(inp.value);
+    if(r.nf){ try{ var ar=await adminLogin(r.key); btn.disabled=false; btn.textContent='인증하기'; ls(LA,'1'); enter(ar,true); return }catch(e){} }
     btn.disabled=false; btn.textContent='인증하기';
     if(r.net){ say('서버에 연결할 수 없어요. 인터넷 연결을 확인하고 다시 시도하세요.'); return }
     if(r.err){ say(r.err); return }
@@ -1052,19 +1046,13 @@ if(typeof document!=='undefined'){
     writeLog(r); enter(r,true);
   });
 
-  // ---- 관리자 로그인
-  admLink.onclick=function(){ admBox.hidden=!admBox.hidden; inp.parentNode.querySelectorAll('.keyfld').forEach(function(x){x.hidden=!admBox.hidden}); admLink.textContent=admBox.hidden?'관리자 로그인':'← 키로 인증'; say('') };
-  $('admGo').onclick=async function(){
-    var em=$('admEmail').value.trim(), pw=$('admPw').value; say('');
-    if(!em||!pw){ say('이메일과 비밀번호를 입력하세요.'); return }
-    var b=this; b.disabled=true; b.textContent='확인 중…';
-    try{ var f=await load(); await f.au.signInWithEmailAndPassword(f.auth,em,pw);
-      if((f.auth.currentUser.email||'').toLowerCase()!==ADMIN_EMAIL){ await f.au.signOut(f.auth); throw {code:'not-admin'} }
-      ls(LA,'1'); b.disabled=false; b.textContent='로그인';
-      enter({id:'-',name:'김민재',role:'admin',exp:'',owner:true},true);
-    }catch(e){ b.disabled=false; b.textContent='로그인';
-      say(e&&e.code==='not-admin'?'관리자 계정이 아니에요.':(e&&/network|fetch/i.test(String(e.code||e.message))?'서버에 연결할 수 없어요.':'이메일 또는 비밀번호가 올바르지 않아요.')) }
-  };
+  // ---- 관리자: 관리자 키를 Firebase 관리자 계정의 비밀번호로 사용
+  async function adminLogin(key){
+    var f=await load();
+    await f.au.signInWithEmailAndPassword(f.auth,ADMIN_EMAIL,fmtKey(key));
+    if((f.auth.currentUser.email||'').toLowerCase()!==ADMIN_EMAIL){ await f.au.signOut(f.auth); throw {code:'not-admin'} }
+    return {id:'-',name:'김민재',role:'admin',exp:'',owner:true};
+  }
 
   // ---- 시작: 저장된 관리자 세션 또는 저장된 키
   (async function(){
