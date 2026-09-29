@@ -1038,7 +1038,7 @@ if(typeof document!=='undefined'){
     ev.preventDefault();
     say(''); btn.disabled=true; btn.textContent='확인 중…';
     var r=await check(inp.value);
-    if(r.nf){ try{ var ar=await adminLogin(r.key); btn.disabled=false; btn.textContent='인증하기'; ls(LA,'1'); enter(ar,true); return }catch(e){ var c=String((e&&e.code)||''); if(/operation-not-allowed|too-many-requests|network|api-key|configuration/.test(c)){ btn.disabled=false; btn.textContent='인증하기'; say(c==='auth/operation-not-allowed'?'Firebase에서 이메일/비밀번호 로그인이 꺼져 있어요. 콘솔 Authentication에서 켜 주세요.':c==='auth/too-many-requests'?'시도가 너무 많아요. 잠시 뒤에 다시 하세요.':'관리자 인증을 할 수 없어요 ('+c+').'); return } } }
+    if(r.nf){ try{ var ar=await adminLogin(r.key); btn.disabled=false; btn.textContent='인증하기'; ls(LA,'1'); enter(ar,true); return }catch(e){ var c=String((e&&e.code)||''); r.err+=' [관리자 확인: '+(c||'오류')+']'; if(/operation-not-allowed|too-many-requests|network|api-key|configuration/.test(c)){ btn.disabled=false; btn.textContent='인증하기'; say(c==='auth/operation-not-allowed'?'Firebase에서 이메일/비밀번호 로그인이 꺼져 있어요. 콘솔 Authentication에서 켜 주세요.':c==='auth/too-many-requests'?'시도가 너무 많아요. 잠시 뒤에 다시 하세요.':'관리자 인증을 할 수 없어요 ('+c+').'); return } } }
     btn.disabled=false; btn.textContent='인증하기';
     if(r.net){ say('서버에 연결할 수 없어요. 인터넷 연결을 확인하고 다시 시도하세요.'); return }
     if(r.err){ say(r.err); return }
