@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<link rel="manifest" href="manifest.webmanifest?v=3.0.1">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=3.0.1">
-<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png?v=3.0.1">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=3.0.1">
+<link rel="manifest" href="manifest.webmanifest?v=3.2.0">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=3.2.0">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png?v=3.2.0">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=3.2.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="화성스튜디오">
@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem('hs_theme')||'dark',e=t==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):t;document.documentElement.setAttribute('data-theme',e);var z=parseFloat(localStorage.getItem('hs_fz')||'1');if(z>=.8&&z<=1.4)document.documentElement.style.setProperty('--fz',z)}catch(x){document.documentElement.setAttribute('data-theme','dark')}})();</script>
 <style>
   /* 레이아웃: 검은 바탕에 샴페인 골드 하이라이트. 로고의 궤도선처럼 가는 선과 넓은 여백 */
   :root{
@@ -401,6 +402,97 @@ details.subs{gap:8px}
 .card[hidden]{display:none}
 @media (max-width:420px){.tabs button{font-size:13.5px;padding:10px 2px}}
 </style>
+<style id="v31">
+#app{zoom:var(--fz,1)}
+/* 라이트 테마 */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#F6F1E6; --surface:#FFFCF5; --surface2:#F3ECDC; --ink:#231C10; --muted:#5C5343; --faint:#857B67;
+  --line:#E3D9C2; --line-strong:#CDBF9F; --accent:#8F6B2E; --accent-ink:#1F1608; --focus:#8F6B2E;
+  --gold1:#6B4D1A; --gold2:#8F6B2E; --gold3:#A8803F;
+  --c-dia:#1C8264; --c-sec:#B06D14; --c-rel:#B5532A; --c-tri:#C0324A; --c-mi:#6248BC; --c-dim:#2A67AE; --c-pas:#AD437F; --c-etc:#6D675B;
+  --goldgrad:linear-gradient(135deg,#F2DEAE 0%,#E0BE7C 50%,#C79F58 100%);
+}
+:root[data-theme="light"] body{background:radial-gradient(880px 460px at 50% -120px,rgba(190,150,80,.16),transparent 72%) top center/100% 560px no-repeat,var(--bg)}
+:root[data-theme="light"] .input,:root[data-theme="light"] .sheet,:root[data-theme="light"] .card,:root[data-theme="light"] .licbox{background:var(--surface);box-shadow:0 10px 28px rgba(90,70,30,.10),inset 0 1px 0 rgba(255,255,255,.7)}
+:root[data-theme="light"] select,:root[data-theme="light"] textarea,:root[data-theme="light"] .prev{background:#FFFFFF}
+:root[data-theme="light"] .prev{color:var(--gold1)}
+:root[data-theme="light"] .lic{background:radial-gradient(760px 520px at 50% 28%,rgba(190,150,80,.18),transparent 70%),var(--bg)}
+:root[data-theme="light"] .tb.main,:root[data-theme="light"] .btn.main{box-shadow:0 6px 16px rgba(160,120,50,.22)}
+:root[data-theme="light"] .hd h1 i,:root[data-theme="light"] .licbox h1 i{background:linear-gradient(135deg,#9A7434,#C79F58);-webkit-background-clip:text;background-clip:text}
+:root[data-theme="light"] .sheet h2,:root[data-theme="light"] .details h2{color:var(--gold2)}
+/* 설정 */
+.pseg{display:flex;gap:4px;flex-wrap:wrap}.pseg .tb{min-height:34px;padding:0 13px;font-size:13.5px}.pseg .tb.on{background:var(--goldgrad);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.prow .tl{min-width:44px}
+#prefs .small{margin-top:10px}
+/* 연결선 */
+#sheetWrap{position:relative}
+#arcs{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:3}
+.hasarcs #sheet{padding-top:20px}
+#arcs .arc{fill:none;stroke:var(--cc);stroke-width:1.7;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:arcDraw .85s var(--ease) forwards;animation-delay:var(--d,0s);opacity:.92}
+#arcs .arc.dash{stroke-dasharray:.04 .03;stroke-dashoffset:0;animation:arcFade .6s ease backwards;animation-delay:var(--d,0s)}
+#arcs .arh{fill:var(--cc);opacity:0;animation:arcHead .3s ease forwards;animation-delay:calc(var(--d,0s) + .62s)}
+#arcs.noanim .arc,#arcs.noanim .arh{animation:none}#arcs.noanim .arc:not(.dash){stroke-dashoffset:0}#arcs.noanim .arh{opacity:1}
+@keyframes arcDraw{to{stroke-dashoffset:0}}@keyframes arcHead{to{opacity:1}}@keyframes arcFade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){#arcs .arc:not(.dash){stroke-dashoffset:0!important}#arcs .arh{opacity:1!important}}
+/* 보이스 리딩 */
+.vlrow{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 12px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.vlc{flex:0 0 auto;scroll-snap-align:start;width:92px;background:var(--surface2);border:1px solid var(--line-strong);border-top:3px solid var(--cc);border-radius:10px;padding:7px 6px 6px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .18s var(--ease),border-color .25s,box-shadow .3s,background .25s}
+.vlc:hover{border-color:var(--gold2)}.vlc:active{transform:scale(.96)}
+.vlc.on{box-shadow:0 0 0 1px var(--cc),0 8px 20px -8px var(--cc);transform:translateY(-2px)}
+.vlc b{font-family:var(--mono);font-size:13.5px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vlc .vr{font-family:var(--serif);font-size:13.5px;color:var(--muted)}
+.vlc svg{display:block;width:70px;height:auto;margin:2px 0}
+.vlc small{font-size:10.5px;color:var(--faint);white-space:nowrap}
+.vlc .sg{stroke:var(--faint);stroke-width:.9}.vlc .fg{stroke:var(--line-strong);stroke-width:.9}.vlc .nut{stroke:var(--ink);stroke-width:2.4}
+.vlc .dt{fill:var(--cc)}.vlc .dt.r{fill:var(--gold2)}.vlc .hold{fill:none;stroke:var(--gold2);stroke-width:1.5}
+.vlc text{fill:var(--muted);font-size:8px;font-family:var(--mono);text-anchor:middle}
+.vlsum{font-size:13px;color:var(--muted);margin-top:2px}.vlsum b{color:var(--gold2);font-weight:600}
+.vlhd{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.vlleg{font-size:12px;color:var(--faint);display:flex;gap:12px;flex-wrap:wrap;margin:2px 0 4px}.vlleg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+</style>
+<style id="v32">
+/* 긴 이름 줄바꿈 */
+.ch{position:relative}
+.ch .s,.ch .r{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.18}
+.ch .r{font-size:14px}
+.ch .s.lg{font-size:12px}.ch .r.lg{font-size:12.5px}
+/* 토스트 */
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,24px);z-index:90;display:flex;align-items:center;gap:14px;max-width:min(92vw,440px);padding:11px 14px 11px 18px;border-radius:14px;background:var(--surface2);color:var(--ink);border:1px solid var(--gold3);box-shadow:0 14px 36px rgba(0,0,0,.45),0 0 0 1px rgba(217,185,138,.12);font-size:14px;opacity:0;pointer-events:none;transition:opacity .28s var(--ease),transform .35s var(--ease)}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{background:none;border:none;border-left:1px solid var(--line-strong);color:var(--gold2);font-weight:700;font-size:14px;padding:4px 2px 4px 14px;cursor:pointer;white-space:nowrap}
+:root[data-theme="light"] #toast{box-shadow:0 12px 30px rgba(90,70,30,.22)}
+/* 박자 표시 */
+.beats{display:none;gap:6px;align-items:center;margin-left:auto}.beats.on{display:inline-flex}
+.beats i{width:8px;height:8px;border-radius:50%;background:var(--line-strong);transition:transform .12s ease,background .12s ease,box-shadow .2s}
+.beats i.on{background:var(--gold2);transform:scale(1.45);box-shadow:0 0 8px var(--gold2)}.beats i.on:first-child{background:var(--goldgrad);transform:scale(1.7)}
+.ch.playing::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:3px;background:color-mix(in srgb,#fff 78%,var(--cc));transform-origin:left;transform:scaleX(0);animation:chFill var(--dur,2s) linear forwards;box-shadow:0 0 8px var(--cc)}
+@keyframes chFill{to{transform:scaleX(1)}}
+/* 연결선 반응 */
+#arcs .arhit{fill:none;stroke:transparent;stroke-width:16;pointer-events:stroke;cursor:pointer}
+#arcs .arc,#arcs .arh{transition:stroke-width .25s var(--ease),filter .3s,opacity .3s}
+#arcs .arcg.glow .arc,#arcs .arcg.flash .arc{stroke-width:3;filter:drop-shadow(0 0 5px var(--cc));opacity:1}
+#arcs .arcg.glow .arh,#arcs .arcg.flash .arh{filter:drop-shadow(0 0 5px var(--cc))}
+.ch.land{animation:landUp .7s var(--ease)}
+@keyframes landUp{0%{transform:translateY(0);box-shadow:0 0 0 0 var(--cc)}35%{transform:translateY(-5px);box-shadow:0 0 0 2px var(--cc),0 10px 24px -8px var(--cc)}100%{transform:translateY(-2px);box-shadow:0 0 0 1px var(--cc),0 8px 22px -8px var(--cc)}}
+/* 내 곡 새로 저장 */
+.sg.ins{animation:sgIn .7s var(--ease)}
+@keyframes sgIn{0%{opacity:0;transform:translateY(-10px);background:rgba(217,185,138,.28)}60%{opacity:1;transform:none;background:rgba(217,185,138,.18)}100%{background:transparent}}
+/* 빈 화면 데모 */
+.demo{display:flex;flex-direction:column;align-items:center;gap:12px;margin:2px 0 14px}
+.dstage{position:relative;width:290px;max-width:100%}
+.dsvg{display:block;width:100%;height:auto;overflow:visible}
+.dsvg .da{fill:none;stroke:var(--c-dia);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
+.dsvg .dh{fill:var(--c-dia)}
+.drow{display:flex;gap:16px;justify-content:center;margin-top:-2px}
+.dc{width:86px;text-align:left;border-bottom:3px solid var(--c-dia);padding:4px 6px 5px;border-radius:6px 6px 0 0;display:flex;flex-direction:column;line-height:1.2}
+.dc b{font-family:var(--mono);font-size:14.5px;font-weight:600;color:var(--ink)}.dc i{font-family:var(--serif);font-size:15px;color:var(--muted);font-style:normal}
+.dc1{animation:dc1 7s ease infinite}.dc2{animation:dc2 7s ease infinite}.dc3{animation:dc3 7s ease infinite}
+.dsvg .da1{animation:da1 7s ease infinite}.dsvg .da2{animation:da2 7s ease infinite}.dsvg .dh1{animation:dh1 7s ease infinite}.dsvg .dh2{animation:dh2 7s ease infinite}
+@keyframes dc1{0%,4%{opacity:0;transform:translateY(8px)}10%,82%{opacity:1;transform:none}90%,100%{opacity:0;transform:translateY(-3px)}}@keyframes dc2{0%,14%{opacity:0;transform:translateY(8px)}20%,82%{opacity:1;transform:none}90%,100%{opacity:0;transform:translateY(-3px)}}@keyframes dc3{0%,24%{opacity:0;transform:translateY(8px)}30%,82%{opacity:1;transform:none}90%,100%{opacity:0;transform:translateY(-3px)}}@keyframes da1{0%,18%{stroke-dashoffset:1;opacity:1}28%,82%{stroke-dashoffset:0;opacity:1}90%,100%{stroke-dashoffset:0;opacity:0}}@keyframes dh1{0%,27%{opacity:0}30%,82%{opacity:1}90%,100%{opacity:0}}@keyframes da2{0%,28%{stroke-dashoffset:1;opacity:1}38%,82%{stroke-dashoffset:0;opacity:1}90%,100%{stroke-dashoffset:0;opacity:0}}@keyframes dh2{0%,37%{opacity:0}40%,82%{opacity:1}90%,100%{opacity:0}}
+.dcap{font-size:12.5px;color:var(--faint);letter-spacing:.02em}
+@media (prefers-reduced-motion:reduce){.dc,.dsvg .da,.dsvg .dh{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}}
+</style>
 <style id="fbcss">
 [hidden]{display:none!important}
 #admBox{display:flex;flex-direction:column;gap:8px}
@@ -421,7 +513,7 @@ details.subs{gap:8px}
 .ab{display:flex;gap:6px;flex-wrap:wrap}.ab .tb{min-height:36px;padding:0 12px;font-size:13px}
 .amuted{padding:12px;color:var(--faint);font-size:13.5px}
 </style>
-<script>(function(){var V="3.0.1";try{if(!navigator.onLine)return;fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==V){var k="hs_reloaded";if(sessionStorage.getItem(k)===j.v)return;sessionStorage.setItem(k,j.v);location.replace(location.pathname+"?v="+encodeURIComponent(j.v))}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var V="3.2.0";try{if(!navigator.onLine)return;fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==V){var k="hs_reloaded";if(sessionStorage.getItem(k)===j.v)return;sessionStorage.setItem(k,j.v);location.replace(location.pathname+"?v="+encodeURIComponent(j.v))}}).catch(function(){})}catch(e){}})();</script>
 </head>
 <body>
 
@@ -436,7 +528,7 @@ details.subs{gap:8px}
     <button type="submit" class="tb main keyfld" id="licBtn">인증하기</button>
     <noscript><p class="licmsg" style="display:block">이 화면에서는 스크립트가 막혀 있어요. 크롬·사파리 같은 브라우저에서 열어 주세요.</p></noscript>
     <p class="lichelp keyfld">키가 없으면 발급한 사람에게 문의하세요.</p>
-    <a class="lnk" href="guide.html?v=3.0.1" style="text-decoration:none">사용 방법 보기 →</a>
+    <a class="lnk" href="guide.html?v=3.2.0" style="text-decoration:none">사용 방법 보기 →</a>
   </form>
   <div class="welcome" id="welcome" hidden aria-live="polite">
     <div class="logo" role="img" aria-label=""></div>
@@ -455,7 +547,7 @@ details.subs{gap:8px}
   </header>
 
   <section class="summary" id="summary" aria-live="polite"></section>
-  <section class="sheet" id="sheetWrap"><div class="shhd"><h2>마디 악보</h2><button type="button" class="tb" id="bPlay" disabled>▶ 재생</button></div><div id="sheet"></div></section>
+  <section class="sheet" id="sheetWrap"><div class="shhd"><h2>마디 악보</h2><span class="beats" id="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></span><button type="button" class="tb" id="bPlay" disabled>▶ 재생</button></div><div id="sheet"></div></section>
   
   <nav class="tabs" id="tabs" role="tablist" aria-label="화면 구분"><span class="ind" id="tabInd"></span>
     <button type="button" role="tab" data-tab="input" aria-selected="true">입력</button>
@@ -502,13 +594,18 @@ details.subs{gap:8px}
     <textarea id="src" spellcheck="false" aria-label="코드 진행"></textarea>
     <div class="hint">마디는 <code>|</code>, 코드는 띄어쓰기로 구분해요. 중간 전조는 <code>key:G</code>나 <code>key:Em</code>처럼 넣고, 가사 악보의 <code>[Dm7]</code> 형식도 붙여넣을 수 있어요.</div>
   </section></div>
-  <div class="tp" id="tp-play" role="tabpanel" hidden><section class="vis" id="playerWrap"><div class="shhd"><h2>재생 설정</h2></div><div class="tempo"><span class="tl">템포</span><button type="button" class="tb tm" id="bpmM" aria-label="템포 낮추기">−</button><input type="range" id="bpm" min="40" max="208" step="2" value="96" aria-label="템포 (BPM)"><button type="button" class="tb tm" id="bpmP" aria-label="템포 높이기">+</button><span class="tv"><b id="bpmV">96</b> BPM</span></div><div class="tempo opts"><span class="tl">음색</span><select id="inst" aria-label="음색"><option value="synth">신스</option><option value="piano">피아노</option><option value="rhodes">로즈</option><option value="pad">패드</option></select><button type="button" class="tb tg" id="bLoop" aria-pressed="false">반복</button><button type="button" class="tb tg" id="bMet" aria-pressed="false">메트로놈</button></div></section><section class="vis" id="visWrap"><div class="shhd"><h2>건반 · 지판</h2><div class="seg"><button type="button" class="tb on" id="tabKbd">건반</button><button type="button" class="tb" id="tabFret">지판</button></div></div><div class="vlabel" id="vLabel">코드를 누르면 구성음이 여기에 표시돼요</div><div id="kbd" class="kbd"></div><div id="fret" class="fret" hidden></div></section></div>
+  <div class="tp" id="tp-play" role="tabpanel" hidden><section class="vis" id="playerWrap"><div class="shhd"><h2>재생 설정</h2></div><div class="tempo"><span class="tl">템포</span><button type="button" class="tb tm" id="bpmM" aria-label="템포 낮추기">−</button><input type="range" id="bpm" min="40" max="208" step="2" value="96" aria-label="템포 (BPM)"><button type="button" class="tb tm" id="bpmP" aria-label="템포 높이기">+</button><span class="tv"><b id="bpmV">96</b> BPM</span></div><div class="tempo opts"><span class="tl">음색</span><select id="inst" aria-label="음색"><option value="synth">신스</option><option value="piano">피아노</option><option value="rhodes">로즈</option><option value="pad">패드</option></select><button type="button" class="tb tg" id="bLoop" aria-pressed="false">반복</button><button type="button" class="tb tg" id="bMet" aria-pressed="false">메트로놈</button></div></section><section class="vis" id="visWrap"><div class="shhd"><h2>건반 · 지판</h2><div class="seg"><button type="button" class="tb on" id="tabKbd">건반</button><button type="button" class="tb" id="tabFret">지판</button></div></div><div class="vlabel" id="vLabel">코드를 누르면 구성음이 여기에 표시돼요</div><div id="kbd" class="kbd"></div><div id="fret" class="fret" hidden></div></section><section class="vis" id="vlWrap"><div class="shhd vlhd"><h2>보이스 리딩 · 기타</h2><button type="button" class="tb" id="vlPlay" disabled>▶ 연속 듣기</button></div><div class="vlleg"><span><i style="background:var(--gold2)"></i>루트</span><span><i style="border:1.5px solid var(--gold2)"></i>앞 코드에서 그대로 유지한 음</span></div><div class="vlrow" id="vlRow"><span class="small muted">코드를 넣으면 코드 사이를 가장 적게 움직이는 운지를 찾아 줘요.</span></div><div class="vlsum" id="vlSum"></div></section></div>
   <div class="tp" id="tp-detail" role="tabpanel" hidden><section class="details" id="details"></section></div>
   <div class="tp" id="tp-tools" role="tabpanel" hidden><section class="songs" id="songs"><div class="shhd"><h2>전조 · 내 곡</h2></div>
     <div class="trow"><span class="tl">전조</span><button type="button" class="tb" id="trM" aria-label="반음 내리기">−1</button><button type="button" class="tb" id="trP" aria-label="반음 올리기">+1</button><select id="trTo" aria-label="키로 이동"><option value="">키로 이동…</option></select></div><div class="trv" id="trV"></div>
     <div class="srow2"><input id="songName" type="text" maxlength="40" placeholder="곡 이름" autocomplete="off"><button type="button" class="tb main" id="songSave">저장</button></div>
     <div class="slist" id="songList"></div>
     <div class="sio"><button type="button" class="tb" id="songExp">파일로 내보내기</button><button type="button" class="tb" id="songImp">파일 가져오기</button><input type="file" id="songFile" accept="application/json,.json" hidden></div>
+  </section><section class="songs" id="prefs"><div class="shhd"><h2>화면 설정</h2></div>
+    <div class="prow"><span class="tl">테마</span><div class="pseg" id="thSeg"><button type="button" class="tb" data-th="auto">자동</button><button type="button" class="tb" data-th="dark">다크</button><button type="button" class="tb" data-th="light">라이트</button></div></div>
+    <div class="prow"><span class="tl">글자</span><div class="pseg" id="fzSeg"><button type="button" class="tb" data-fz="0.92">작게</button><button type="button" class="tb" data-fz="1">보통</button><button type="button" class="tb" data-fz="1.12">크게</button><button type="button" class="tb" data-fz="1.25">아주 크게</button></div></div>
+    <div class="prow"><span class="tl">연결선</span><button type="button" class="tb tg" id="bArcs" aria-pressed="true">악보에 해결 연결선 표시</button></div>
+    <p class="small muted">자동 테마는 기기의 다크/라이트 설정을 따라가요. 설정은 이 기기에 저장돼요.</p>
   </section></div>
   <div class="tp" id="tp-admin" role="tabpanel" hidden></div>
 
@@ -1176,7 +1273,166 @@ if(typeof document!=='undefined'){
   window.addEventListener('resize',moveInd);
   try{ new ResizeObserver(moveInd).observe(document.getElementById('tabs')) }catch(e){}
   { let t0='input'; try{ t0=localStorage.getItem('hs_tab')||'input' }catch(e){} if(t0==='admin') t0='input'; setTimeout(()=>goTab(t0,true),0); [200,700,1500].forEach(ms=>setTimeout(moveInd,ms)) }
-  document.addEventListener('visibilitychange',()=>{ if(document.hidden) stopPlay() });
+
+  // ================= 화면 설정 (테마 · 글자 크기 · 연결선) =================
+  { const html=document.documentElement, mq=window.matchMedia?matchMedia('(prefers-color-scheme: light)'):null;
+    const get=(k,d)=>{ try{ return localStorage.getItem(k)||d }catch(e){ return d } }, set=(k,v)=>{ try{ localStorage.setItem(k,v) }catch(e){} };
+    function applyTheme(){ const v=get('hs_theme','dark'), eff=v==='auto'?((mq&&mq.matches)?'light':'dark'):v; html.setAttribute('data-theme',eff);
+      let m=document.querySelector('meta[name="theme-color"]'); if(!m){ m=document.createElement('meta'); m.name='theme-color'; document.head.appendChild(m) } m.content=eff==='light'?'#F6F1E6':'#0A0A0B';
+      document.querySelectorAll('#thSeg .tb').forEach(b=>b.classList.toggle('on',b.dataset.th===v)) }
+    function applyFz(){ const z=parseFloat(get('hs_fz','1'))||1; html.style.setProperty('--fz',z); document.querySelectorAll('#fzSeg .tb').forEach(b=>b.classList.toggle('on',Math.abs(parseFloat(b.dataset.fz)-z)<.01)) }
+    document.getElementById('thSeg').onclick=e=>{ const b=e.target.closest('[data-th]'); if(!b) return; set('hs_theme',b.dataset.th); applyTheme() };
+    document.getElementById('fzSeg').onclick=e=>{ const b=e.target.closest('[data-fz]'); if(!b) return; set('hs_fz',b.dataset.fz); applyFz(); setTimeout(()=>{ try{ moveInd() }catch(x){} },60) };
+    if(mq){ const f=()=>{ if(get('hs_theme','dark')==='auto') applyTheme() }; if(mq.addEventListener) mq.addEventListener('change',f); else if(mq.addListener) mq.addListener(f) }
+    applyTheme(); applyFz();
+    const ab=document.getElementById('bArcs'); ab.setAttribute('aria-pressed',get('hs_arcs','1')!=='0');
+    ab.onclick=()=>{ const on=ab.getAttribute('aria-pressed')!=='true'; ab.setAttribute('aria-pressed',on); set('hs_arcs',on?'1':'0'); drawArcs(true) } }
+
+  // ================= 해결 연결선 =================
+  const wrapEl=document.getElementById('sheetWrap'), shEl=document.getElementById('sheet'), NS='http://www.w3.org/2000/svg';
+  const svgA=document.createElementNS(NS,'svg'); svgA.id='arcs'; svgA.setAttribute('aria-hidden','true'); wrapEl.appendChild(svgA);
+  function linkOf(it,nx){ if(!nx||!it.a||!nx.a) return false; const a=it.a, r=String(a.roman||''), n=String(nx.a.roman||'');
+    if(/미해결/.test(a.label||'')) return false;
+    if(a.cat==='sec'||a.cat==='tri'||a.cat==='rel') return true;
+    if(a.cat==='dia'){ if(/^V(?!I)/.test(r)&&/^I(?![IV])/.test(n)) return true; if(/^II(?!I)/.test(r)&&/^V(?!I)/.test(n)) return true }
+    return false }
+  function drawArcs(anim){ svgA.innerHTML=''; svgA.classList.toggle('noanim',!anim);
+    let on=true; try{ on=localStorage.getItem('hs_arcs')!=='0' }catch(e){}
+    if(!on||!wrapEl.offsetWidth){ wrapEl.classList.remove('hasarcs'); return }
+    let res; try{ res=Engine.analyze(src.value,sel.value) }catch(e){ return } const list=res.list||[];
+    const links=[]; for(let i=0;i<list.length-1;i++) if(linkOf(list[i],list[i+1])) links.push(i);
+    wrapEl.classList.toggle('hasarcs',links.length>0); if(!links.length) return;
+    const wr=wrapEl.getBoundingClientRect(), sc=(wr.width/wrapEl.offsetWidth)||1;
+    svgA.setAttribute('width',wrapEl.offsetWidth); svgA.setAttribute('height',wrapEl.offsetHeight); svgA.setAttribute('viewBox','0 0 '+wrapEl.offsetWidth+' '+wrapEl.offsetHeight);
+    const rc=el=>{ const r=el.getBoundingClientRect(); return {x:(r.left-wr.left)/sc,y:(r.top-wr.top)/sc,w:r.width/sc,h:r.height/sc} };
+    let n=0;
+    links.forEach(i=>{ const ea=chipOf(i), eb=chipOf(i+1); if(!ea||!eb) return; const a=rc(ea), b=rc(eb), cat=list[i].a.cat; const col='var('+((CAT[cat]||CAT.etc)[1])+')';
+      const g=document.createElementNS(NS,'g'); g.setAttribute('class','arcg'); g.dataset.from=i; g.dataset.to=i+1; g.style.setProperty('--cc',col); g.style.setProperty('--d',(n++*0.12)+'s');
+      const p=document.createElementNS(NS,'path'), h=document.createElementNS(NS,'path'); p.setAttribute('class','arc'); h.setAttribute('class','arh'); p.setAttribute('pathLength','1');
+      let d, ex, ey, ang;
+      if(Math.abs(a.y-b.y)<8){ const x1=a.x+a.w*.6, x2=b.x+b.w*.4, y=a.y-1, ht=Math.min(22,9+(x2-x1)*.13), cx=(x1+x2)/2, cy=y-2*ht;
+        d='M'+x1+' '+y+' Q'+cx+' '+cy+' '+x2+' '+y; ex=x2; ey=y; ang=Math.atan2(y-cy,x2-cx) }
+      else { const sr=rc(shEl), x1=a.x+a.w*.6, y=a.y-1, xr=sr.x+sr.w-4, x2=b.x+b.w*.4, yb=b.y-1, xl=sr.x+4;
+        // 줄이 바뀌는 경우: 오른쪽 끝으로 나가는 호 + 다음 줄 왼쪽에서 들어오는 호
+        const out=document.createElementNS(NS,'path'); out.setAttribute('class','arc dash'); out.setAttribute('pathLength','1'); out.setAttribute('d','M'+x1+' '+y+' Q'+((x1+xr)/2)+' '+(y-14)+' '+xr+' '+(y-3)); g.appendChild(out);
+        const ht=Math.min(16,7+(x2-xl)*.1); d='M'+xl+' '+(yb-3)+' Q'+((xl+x2)/2)+' '+(yb-2*ht)+' '+x2+' '+yb; ex=x2; ey=yb; ang=Math.atan2(ht,(x2-xl)/2) }
+      p.setAttribute('d',d);
+      const ht2=document.createElementNS(NS,'path'); ht2.setAttribute('class','arhit'); ht2.setAttribute('d',d); g.appendChild(ht2);
+      const L=5.2, a1=ang+Math.PI-.5, a2=ang+Math.PI+.5;
+      h.setAttribute('d','M'+ex+' '+ey+' L'+(ex+L*Math.cos(a1))+' '+(ey+L*Math.sin(a1))+' L'+(ex+L*Math.cos(a2))+' '+(ey+L*Math.sin(a2))+' Z');
+      const tt=document.createElementNS(NS,'title'); tt.textContent=list[i].c.raw+' → '+list[i+1].c.raw+' 해결'; g.append(p,h,tt); svgA.appendChild(g) }) }
+  let arcT=0, arcW=0;
+  function schedArcs(){ clearTimeout(arcT); svgA.innerHTML=''; arcT=setTimeout(()=>drawArcs(true),780) }
+  new MutationObserver(schedArcs).observe(shEl,{childList:true,subtree:true});
+  try{ new ResizeObserver(()=>{ const w=wrapEl.offsetWidth; if(w===arcW) return; const first=!arcW; arcW=w; clearTimeout(arcT); arcT=setTimeout(()=>drawArcs(first),first?780:140) }).observe(wrapEl) }catch(e){}
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ clearTimeout(arcT); arcT=setTimeout(()=>drawArcs(false),200) });
+
+  // ================= 보이스 리딩 (기타) =================
+  const TUNE=[40,45,50,55,59,64];
+  function voicingsFor(it){ const c=it.c, root=c.root; const pcs=[...new Set((it.a.tones||[]).map(t=>pcOf(t.name)).filter(x=>x!==null))]; if(!pcs.length) return [];
+    const set=new Set(pcs), iv=pc=>((pc-root)%12+12)%12;
+    let ess=pcs.filter(p=>iv(p)!==0&&iv(p)!==7).sort((a,b)=>{ const pr=x=>{ const v=iv(x); return (v===3||v===4)?0:(v===9||v===10||v===11)?1:2 }; return pr(a)-pr(b) }).slice(0,3);
+    if(!ess.length) ess=pcs.slice();
+    const seen=new Map();
+    for(let s0=0;s0<=2;s0++) for(let b=0;b<=9;b++){ const lo=b, hi=b===0?4:b+3; const opts=[];
+      for(let k=0;k<4;k++){ const st=s0+k, o=[]; for(let f=lo;f<=hi;f++) if(set.has((TUNE[st]+f)%12)) o.push(f); if(!o.length){ opts.length=0; break } opts.push(o) }
+      if(opts.length<4) continue;
+      const rec=(k,cur)=>{ if(k===4){ const got=new Set(cur.map((f,j)=>(TUNE[s0+j]+f)%12)); if(!ess.every(p=>got.has(p))) return;
+          const fr=[-1,-1,-1,-1,-1,-1]; cur.forEach((f,j)=>fr[s0+j]=f); const key=fr.join(','); if(seen.has(key)) return;
+          const midis=cur.map((f,j)=>TUNE[s0+j]+f).sort((x,y)=>x-y); const nz=cur.filter(f=>f>0); const center=nz.length?nz.reduce((x,y)=>x+y,0)/nz.length:0;
+          const low=TUNE[s0]+cur[0]; const unary=.12*Math.abs(center-5)+(cur.some(f=>f===0)?.25:0)-((low%12)===root?.35:0)+(nz.length?(Math.max.apply(null,nz)-Math.min.apply(null,nz))*.12:0);
+          seen.set(key,{frets:fr,midis,center,unary,lo:nz.length?Math.min.apply(null,nz):1}); return }
+        opts[k].forEach(f=>rec(k+1,cur.concat(f))) };
+      rec(0,[]) }
+    return [...seen.values()].sort((a,b)=>a.unary-b.unary).slice(0,70) }
+  function tcost(a,b){ let d=0,hold=0; for(let k=0;k<4;k++) d+=Math.abs(a.midis[k]-b.midis[k]); for(let s=0;s<6;s++) if(a.frets[s]>=0&&a.frets[s]===b.frets[s]) hold++; return d+Math.abs(a.center-b.center)*.35-hold*1.2 }
+  function solveVL(list){ const C=list.map(voicingsFor); const n=C.length, dp=[], bk=[];
+    for(let i=0;i<n;i++){ const cs=C[i].length?C[i]:[null]; dp.push(new Array(cs.length).fill(Infinity)); bk.push(new Array(cs.length).fill(-1));
+      cs.forEach((v,j)=>{ const u=v?v.unary:0; if(i===0){ dp[i][j]=u; return }
+        const ps=C[i-1].length?C[i-1]:[null]; ps.forEach((pv,pj)=>{ const t=(pv&&v)?tcost(pv,v):0; const val=dp[i-1][pj]+t+u; if(val<dp[i][j]){ dp[i][j]=val; bk[i][j]=pj } }) }) }
+    const out=new Array(n).fill(null); if(!n) return out; let j=0, best=Infinity; dp[n-1].forEach((v,x)=>{ if(v<best){ best=v; j=x } });
+    for(let i=n-1;i>=0;i--){ out[i]=C[i].length?C[i][j]:null; j=bk[i][j]<0?0:bk[i][j] }
+    return out }
+  function vlSvg(v,it,prev,color){ const base=v.lo<=1?1:v.lo, X=i=>8+i*9, Y=r=>20+r*11; let g='<svg viewBox="0 0 62 80" aria-hidden="true">';
+    for(let r=0;r<=5;r++) g+='<line class="'+(r===0&&base===1?'nut':'fg')+'" x1="'+X(0)+'" x2="'+X(5)+'" y1="'+Y(r)+'" y2="'+Y(r)+'"/>';
+    for(let s=0;s<6;s++) g+='<line class="sg" x1="'+X(s)+'" x2="'+X(s)+'" y1="'+Y(0)+'" y2="'+Y(5)+'"/>';
+    if(base>1) g+='<text x="2" y="'+(Y(0)+8)+'" style="text-anchor:start;font-size:7px">'+base+'</text>';
+    v.frets.forEach((f,s)=>{ const x=X(s);
+      if(f<0){ g+='<text x="'+x+'" y="14">×</text>'; return }
+      const isRoot=((TUNE[s]+f)%12)===it.c.root, held=prev&&prev.frets[s]===f;
+      if(f===0){ g+='<circle cx="'+x+'" cy="11" r="3" class="'+(held?'hold':'hold')+'" style="'+(held?'':'stroke:var(--faint);stroke-width:1')+'"/>'; return }
+      const y=Y(f-base)+5.5; g+='<circle cx="'+x+'" cy="'+y+'" r="4.1" class="dt'+(isRoot?' r':'')+'"/>'; if(held) g+='<circle cx="'+x+'" cy="'+y+'" r="6" class="hold"/>' });
+    return g+'</svg>' }
+  let vlSeq=[], vlSess=null, vlTm=[];
+  const vlRow=document.getElementById('vlRow'), vlSum=document.getElementById('vlSum'), vlBtn=document.getElementById('vlPlay');
+  function vlStop(){ vlTm.forEach(clearTimeout); vlTm=[]; if(vlSess){ killSess(vlSess); vlSess=null } vlBtn.textContent='▶ 연속 듣기'; vlRow.querySelectorAll('.vlc.on').forEach(c=>c.classList.remove('on')) }
+  function vlRender(){ vlStop(); let res; try{ res=Engine.analyze(src.value,sel.value) }catch(e){ return } const list=res.list||[];
+    vlRow.innerHTML=''; vlSum.textContent=''; vlSeq=[]; vlBtn.disabled=true;
+    if(!list.length){ vlRow.innerHTML='<span class="small muted">코드를 넣으면 코드 사이를 가장 적게 움직이는 운지를 찾아 줘요.</span>'; return }
+    const seq=solveVL(list); vlSeq=seq; let move=0, hold=0, pairs=0, prev=null;
+    list.forEach((it,i)=>{ const v=seq[i]; const color=CATV(it.a.cat);
+      const b=document.createElement('button'); b.type='button'; b.className='vlc'; b.style.setProperty('--cc',color); b.dataset.i=i;
+      if(!v){ b.innerHTML='<b>'+esc(it.c.raw)+'</b><span class="vr">'+esc(it.a.roman||'')+'</span><small>운지 없음</small>'; b.disabled=true; vlRow.appendChild(b); prev=null; return }
+      let sm='처음'; if(prev){ const t=tcost(prev,v); let d=0,h=0; for(let k=0;k<4;k++) d+=Math.abs(prev.midis[k]-v.midis[k]); for(let s=0;s<6;s++) if(prev.frets[s]>=0&&prev.frets[s]===v.frets[s]) h++; move+=d; hold+=h; pairs++; sm='유지 '+h+' · 이동 '+d }
+      b.innerHTML='<b>'+esc(it.c.raw)+'</b><span class="vr">'+esc(it.a.roman||'')+'</span>'+vlSvg(v,it,prev,color)+'<small>'+sm+'</small>';
+      b.onclick=()=>{ vlStop(); if(playing) stopPlay(); const ctx=ac(); if(!ctx) return; const ss=newSess(); voiceNotes(v.midis,ctx.currentTime+.03,1.3,ss,instV()); setTimeout(()=>killSess(ss),2400);
+        b.classList.add('on'); setTimeout(()=>b.classList.remove('on'),700); showNotes(v.midis,'<b>'+esc(it.c.raw)+'</b>보이스 리딩 운지',color) };
+      vlRow.appendChild(b); prev=v });
+    vlBtn.disabled=!seq.some(Boolean);
+    if(pairs) vlSum.innerHTML='코드 '+pairs+'번 이동 · 음 이동 합계 <b>'+move+'반음</b> · 그대로 잡고 있는 음 <b>'+hold+'개</b> (이동 평균 '+(move/pairs).toFixed(1)+'반음)' }
+  vlBtn.onclick=()=>{ if(vlSess){ vlStop(); return } if(playing) stopPlay(); const ctx=ac(); if(!ctx) return; vlSess=newSess(); const d=Math.max(.6,120/bpm()); const t0=ctx.currentTime+.05; vlBtn.textContent='■ 정지';
+    const cards=[...vlRow.querySelectorAll('.vlc')]; let last=-1;
+    vlSeq.forEach((v,i)=>{ if(!v) return; voiceNotes(v.midis,t0+i*d,d*.95,vlSess,instV()); vlTm.push(setTimeout(()=>{ cards.forEach(c=>c.classList.remove('on')); const c=cards[i]; if(c){ c.classList.add('on'); try{ c.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'}) }catch(e){} } },i*d*1000)) });
+    vlTm.push(setTimeout(vlStop,vlSeq.length*d*1000+500)) };
+  document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('#bPlay')) vlStop() },true);
+  let vlT=0; new MutationObserver(()=>{ clearTimeout(vlT); vlT=setTimeout(vlRender,300) }).observe(shEl,{childList:true,subtree:true});
+
+  // ================= v3.2 연출 · 디테일 =================
+  // ---- 토스트
+  const tEl=document.createElement('div'); tEl.id='toast'; tEl.setAttribute('role','status'); tEl.setAttribute('aria-live','polite'); document.body.appendChild(tEl); let tT=0;
+  function toastHide(){ tEl.classList.remove('show') }
+  function toast(msg,act,fn,ms){ tEl.innerHTML=''; const m=document.createElement('span'); m.textContent=msg; tEl.appendChild(m);
+    if(act){ const b=document.createElement('button'); b.type='button'; b.textContent=act; b.onclick=()=>{ toastHide(); if(fn) fn() }; tEl.appendChild(b) }
+    tEl.classList.add('show'); clearTimeout(tT); tT=setTimeout(toastHide,ms||5200) }
+  const undoNow=()=>{ undo(); setTimeout(()=>toast('되돌렸어요'),0) };
+  { const _rc=replaceChord; replaceChord=function(idx,raw){ const h0=hist.length; _rc(idx,raw); if(hist.length>h0) toast('대체 코드로 바꿨어요 · '+raw,'되돌리기',undoNow) } }
+  { const _tb=transposeBy; transposeBy=function(n){ const h0=hist.length; _tb(n); if(hist.length>h0){ const m=((n%12)+12)%12, st=m>6?m-12:m; toast('전조했어요 ('+(st>0?'+':'')+st+'반음)','되돌리기',undoNow) } } }
+
+  // ---- 긴 이름은 title로도 전체 보여주기
+  function fillTitles(){ document.querySelectorAll('#sheet .ch').forEach(c=>{ const a=c.querySelector('.s'), r=c.querySelector('.r'); if(a&&r){ c.title=a.textContent+' · '+r.textContent; a.classList.toggle('lg',a.textContent.length>7); r.classList.toggle('lg',r.textContent.length>9) } }) }
+  new MutationObserver(()=>{ requestAnimationFrame(fillTitles) }).observe(shEl,{childList:true,subtree:true});
+
+  // ---- 내 곡 저장 피드백
+  { const sb=document.getElementById('songSave'), nm=document.getElementById('songName');
+    sb.addEventListener('click',()=>{ if(!src.value.trim()) return; const before=getSongs(), name=nm.value.trim()||('곡 '+(before.length+1)), isNew=!before.some(x=>x.name===name);
+      setTimeout(()=>{ const now=getSongs(); if(!now.some(x=>x.name===name)) return; toast('“'+name+'” '+(isNew?'저장했어요':'덮어썼어요')+' · 내 곡 '+now.length+'곡');
+        [...document.querySelectorAll('#songList .sg')].forEach(r=>{ const b=r.querySelector('.si b'); if(b&&b.textContent===name){ r.classList.add('ins'); setTimeout(()=>r.classList.remove('ins'),900) } }) },30) },true);
+    document.getElementById('songExp').addEventListener('click',()=>{ const n=getSongs().length; toast(n?('내 곡 '+n+'곡을 파일로 내보냈어요'):'내보낼 곡이 아직 없어요') }) }
+
+  // ---- 박자 표시
+  const beatsEl=document.getElementById('beats'); let beatRaf=0, beatT0=0;
+  function beatLoop(){ if(!playing){ beatStop(); return } const B=60000/bpm(), k=Math.floor(Math.max(0,performance.now()-beatT0)/B)%4; [...beatsEl.children].forEach((d,i)=>d.classList.toggle('on',i===k)); beatRaf=requestAnimationFrame(beatLoop) }
+  function beatStop(){ cancelAnimationFrame(beatRaf); beatRaf=0; beatsEl.classList.remove('on'); [...beatsEl.children].forEach(d=>d.classList.remove('on')) }
+  { const _s=startPlay; startPlay=function(){ _s.apply(this,arguments); if(playing){ beatStop(); beatT0=performance.now()+80; beatsEl.classList.add('on'); beatRaf=requestAnimationFrame(beatLoop) } } }
+  { const _x=stopPlay; stopPlay=function(){ _x.apply(this,arguments); beatStop(); lastCur=-1; svgA.querySelectorAll('.arcg.glow').forEach(g=>g.classList.remove('glow')) } }
+
+  // ---- 재생 중 칩 진행 막대 · 연결선 반응
+  let lastCur=-1;
+  function syncPlaying(){ const cur=shEl.querySelector('.ch.playing'); const i=cur?+cur.dataset.i:-1; if(i===lastCur) return; lastCur=i;
+    svgA.querySelectorAll('.arcg').forEach(g=>g.classList.toggle('glow',+g.dataset.from===i));
+    if(!cur) return; const n=Math.max(1,cur.parentElement.querySelectorAll('.ch').length); cur.style.setProperty('--dur',(4*60/bpm()/n).toFixed(3)+'s');
+    if(svgA.querySelector('.arcg[data-to="'+i+'"]')){ cur.classList.remove('land'); void cur.offsetWidth; cur.classList.add('land'); setTimeout(()=>cur.classList.remove('land'),720) } }
+  new MutationObserver(syncPlaying).observe(shEl,{attributes:true,attributeFilter:['class'],subtree:true});
+  svgA.addEventListener('click',e=>{ const g=e.target.closest&&e.target.closest('.arcg'); if(!g) return; const a=+g.dataset.from, b=+g.dataset.to; g.classList.add('flash'); setTimeout(()=>g.classList.remove('flash'),1500);
+    const ca=chipOf(a), cb=chipOf(b); if(cb){ cb.classList.remove('land'); void cb.offsetWidth; cb.classList.add('land'); setTimeout(()=>cb.classList.remove('land'),720) }
+    if(ca&&cb){ const t=c=>(c.querySelector('.s')||{}).textContent+' '+((c.querySelector('.r')||{}).textContent||''); toast(t(ca)+' → '+t(cb)+' 해결') } });
+
+  // ---- 빈 화면 데모
+  const DEMO='<div class="demo"><div class="dstage"><svg class="dsvg" viewBox="0 0 290 30" aria-hidden="true"><path class="da da1" pathLength="1" d="M65 28 Q94 -6 123 28"/><path class="dh dh1" d="M123 28 L116 24.8 L120.9 20.6 Z"/><path class="da da2" pathLength="1" d="M167 28 Q196 -6 225 28"/><path class="dh dh2" d="M225 28 L218 24.8 L222.9 20.6 Z"/></svg><div class="drow"><span class="dc dc1"><b>Dm7</b><i>IIm7</i></span><span class="dc dc2"><b>G7</b><i>V7</i></span><span class="dc dc3"><b>Cmaj7</b><i>Imaj7</i></span></div></div><div class="dcap">코드를 넣으면 이렇게 해결 연결선이 그려져요</div><button type="button" class="tb main" id="demoGo">예시로 시작하기</button></div>';
+  function injectDemo(){ const e=shEl.querySelector(':scope>.empty'); if(!e||e.querySelector('.demo')) return; e.insertAdjacentHTML('afterbegin',DEMO);
+    const g=e.querySelector('#demoGo'); g.onclick=()=>{ const x=EX[3]; src.value=x.src; sel.value=x.key; run(); save() } }
+  new MutationObserver(injectDemo).observe(shEl,{childList:true}); injectDemo();
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden){ stopPlay(); vlStop() } });
   window.addEventListener('pagehide',()=>stopPlay());
   window.__hs={midi:chordMidi};
   let PREVSIG={}, PREVKEY='';
@@ -1385,8 +1641,8 @@ if(typeof document!=='undefined'){
 
   function addInfo(r){
     var p=document.createElement('p'); p.className='foot licinfo';
-    p.innerHTML='<span></span> <a class="glink" href="guide.html?v=3.0.1">사용 가이드</a> <button type="button">로그아웃</button>';
-    p.firstChild.textContent='라이선스 인증됨 · '+(r.name||('키 '+r.id))+' · '+ROLE[r.role]+(r.exp?' · '+r.exp+'까지':'')+'  · v3.0.1';
+    p.innerHTML='<span></span> <a class="glink" href="guide.html?v=3.2.0">사용 가이드</a> <button type="button">로그아웃</button>';
+    p.firstChild.textContent='라이선스 인증됨 · '+(r.name||('키 '+r.id))+' · '+ROLE[r.role]+(r.exp?' · '+r.exp+'까지':'')+'  · v3.2.0';
     p.querySelector('button').onclick=async function(){
       ls(LS,null); ls(LC,null); ls(LA,null);
       try{ var f=await load(); await f.au.signOut(f.auth) }catch(e){}
