@@ -238,6 +238,43 @@
   @media (prefers-reduced-motion: reduce){.lic,.licbox,.welcome{transition:none}#app.enter{animation:none}}
   @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
+<style id="anim">
+:root{--ease:cubic-bezier(.2,.8,.2,1)}
+/* 로고: 숨쉬듯 떠 있고, 빛이 한 번씩 지나가요. 누르면 한 바퀴 돌아요 */
+.logo{position:relative;animation:lgFloat 7s ease-in-out infinite,lgGlow 5s ease-in-out infinite}
+.logo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 42%,rgba(255,248,232,.9) 50%,transparent 58%) 150% 0/250% 100% no-repeat;-webkit-mask:var(--logo) center/contain no-repeat;mask:var(--logo) center/contain no-repeat;animation:lgSheen 6.5s ease-in-out 1.2s infinite}
+.logo.spin{animation:lgSpin 1.15s var(--ease)}
+.hd .logo,.licbox .logo{cursor:pointer;-webkit-tap-highlight-color:transparent}
+@keyframes lgFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes lgGlow{0%,100%{filter:drop-shadow(0 8px 24px rgba(217,185,138,.12))}50%{filter:drop-shadow(0 8px 30px rgba(217,185,138,.36))}}
+@keyframes lgSheen{0%{background-position:150% 0}45%,100%{background-position:-50% 0}}
+@keyframes lgSpin{0%{transform:perspective(600px) rotateY(0)}100%{transform:perspective(600px) rotateY(360deg)}}
+/* 화면 진입: 위에서부터 차례로 */
+#app.enter{animation:none}
+#app.enter>*{animation:secIn .8s var(--ease) backwards}
+#app.enter>*:nth-child(1){animation-delay:.05s}#app.enter>*:nth-child(2){animation-delay:.14s}#app.enter>*:nth-child(3){animation-delay:.23s}#app.enter>*:nth-child(4){animation-delay:.32s}#app.enter>*:nth-child(n+5){animation-delay:.4s}
+@keyframes secIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.licbox{animation:secIn 1s var(--ease) backwards}
+.welcome .logo{animation:lgFloat 6s ease-in-out infinite,lgGlow 3.4s ease-in-out infinite}
+/* 코드를 넣으면 새 코드만 부드럽게 떠올라요 */
+.ch.pop{animation:popIn .6s var(--ease) backwards;animation-delay:var(--d,0ms)}
+@keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.9);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+.card.rise{animation:riseIn .7s var(--ease) backwards;animation-delay:var(--d,0ms)}
+@keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.bar{transition:background-color .3s}
+.srow .bar:has(.pop){background:linear-gradient(180deg,rgba(217,185,138,.07),transparent)}
+.legend .lg b,.keyline .k{transition:color .3s}
+.keyline.chg .k{animation:keyIn .6s var(--ease)}
+@keyframes keyIn{from{opacity:0;transform:translateY(6px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+/* 버튼: 부드러운 전환과 눌림 */
+.rt,.ql,.tb,.ch,.cp{transition:background-color .25s var(--ease),border-color .25s var(--ease),color .25s var(--ease),transform .18s var(--ease),box-shadow .3s var(--ease),filter .25s}
+.rt:active,.ql:active,.tb:active,.ch:active{transform:scale(.95)}
+@media (hover:hover){.rt:hover,.ql:hover,.tb:hover{transform:translateY(-1px)}.tb.main:hover{box-shadow:0 12px 28px rgba(217,185,138,.28)}.rt:active,.ql:active,.tb:active{transform:scale(.95)}}
+.prev{transition:border-color .3s,box-shadow .3s}.prev.tick{animation:tick .35s var(--ease)}
+@keyframes tick{from{transform:scale(.97);opacity:.6}to{transform:none;opacity:1}}
+.card.flash,.card{transition:box-shadow .5s var(--ease),border-color .5s var(--ease)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
 <style id="fbcss">
 [hidden]{display:none!important}
 #admBox{display:flex;flex-direction:column;gap:8px}
@@ -815,12 +852,16 @@ if(typeof document!=='undefined'){
   // why 문구는 코드 기호만 끼워 넣은 템플릿이라, 코드 기호만 이스케이프
   const safe=s=>s.replace(/<(?!\/?b>)/g,'&lt;');
 
+  let PREVSIG={}, PREVKEY='';
   function run(){
     const {rows,list,key,auto}=Engine.analyze(src.value,sel.value);
+    const NEWSIG={}, fresh={}; let nk=0;
+    list.forEach(it=>{ const sg=it.c.raw+'|'+it.a.roman+'|'+it.a.cat; NEWSIG[it.i]=sg; if(PREVSIG[it.i]!==sg){ fresh[it.i]=Math.min(nk++*60,480)+'ms' } });
+    PREVSIG=NEWSIG;
     if(palHook) palHook(key,auto);
     // 요약
     const sm=$('#summary'); sm.innerHTML='';
-    const kl=h('div','keyline'); kl.appendChild(h('span','k',esc(Engine.kname(key)))); if(auto) kl.appendChild(h('span','auto','자동 추정')); kl.appendChild(h('span','scale',esc(key.scale.join(' · '))));
+    const kl=h('div','keyline'+((Engine.kname(key)+auto)!==PREVKEY?' chg':'')); PREVKEY=Engine.kname(key)+auto; kl.appendChild(h('span','k',esc(Engine.kname(key)))); if(auto) kl.appendChild(h('span','auto','자동 추정')); kl.appendChild(h('span','scale',esc(key.scale.join(' · '))));
     sm.appendChild(kl);
     const cnt={}; list.forEach(it=>cnt[it.a.cat]=(cnt[it.a.cat]||0)+1);
     const lg=h('div','legend'); Object.entries(CAT).forEach(([k,[t,v]])=>{ const e=h('span','lg'+(cnt[k]?'':' zero'),esc(t)+' <b>'+(cnt[k]||0)+'</b>'); e.style.setProperty('--cc','var('+v+')'); lg.appendChild(e) });
@@ -828,19 +869,19 @@ if(typeof document!=='undefined'){
 
     // 개요
     const sh=$('#sheet'); sh.innerHTML='';
-    if(!list.length){ sh.appendChild(h('div','empty','아래에서 코드를 골라 추가하면 여기에 악보가 나와요.')); $('#details').innerHTML=''; return }
+    if(!list.length){ sh.appendChild(h('div','empty','아래에서 코드를 골라 추가하면 여기에 악보가 나와요.')); $('#details').innerHTML=''; PREVSIG={}; return }
     rows.forEach(row=>{ const r=h('div','srow'); row.forEach(bar=>{ const b=h('div','bar'); b.appendChild(h('span','bn',String(bar.no))); const cs=h('div','cs');
       bar.items.forEach(it=>{ if(it.type==='key'){ cs.appendChild(h('span','kchg','→ '+esc(Engine.kname(it.key)))); return } if(it.type!=='chord') return;
         const btn=h('button','ch'); btn.type='button'; btn.style.setProperty('--cc','var('+CAT[it.a.cat][1]+')');
         btn.innerHTML='<span class="s">'+esc(it.c.raw)+'</span><span class="r">'+esc(it.a.roman)+'</span>';
-        btn.title=CAT[it.a.cat][0]; btn.onclick=()=>{ const el=document.getElementById('c'+it.i); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1400) } };
+        btn.title=CAT[it.a.cat][0]; if(fresh[it.i]){ btn.classList.add('pop'); btn.style.setProperty('--d',fresh[it.i]) } btn.onclick=()=>{ const el=document.getElementById('c'+it.i); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1400) } };
         cs.appendChild(btn) });
       b.appendChild(cs); r.appendChild(b) }); sh.appendChild(r) });
 
     // 상세
     const dt=$('#details'); dt.innerHTML=''; dt.appendChild(h('h2',null,'코드별 해설'));
     list.forEach(it=>{ const a=it.a;
-      const card=h('article','card'); card.id='c'+it.i; card.style.setProperty('--cc','var('+CAT[a.cat][1]+')');
+      const card=h('article','card'); card.id='c'+it.i; if(fresh[it.i]){ card.classList.add('rise'); card.style.setProperty('--d',fresh[it.i]) } card.style.setProperty('--cc','var('+CAT[a.cat][1]+')');
       const l=h('div','l'); l.appendChild(h('span','where','마디 '+it.bar+' · '+esc(Engine.kname(it.key))));
       l.appendChild(h('span','sym',esc(it.c.raw))); l.appendChild(h('span','rom',esc(a.roman))); l.appendChild(h('span','chip',esc(a.label||CAT[a.cat][0])));
       const r=h('div','r'); r.appendChild(h('div','fn','<span class="rk r1">1순위</span>'+esc(a.fn||'')));
@@ -1021,11 +1062,14 @@ if(typeof document!=='undefined'){
     app.appendChild(p);
   }
   async function enter(r,fresh){
-    if(fresh){
-      form.classList.add('out'); await sleep(320); form.hidden=true;
-      wName.textContent=(r.name?r.name:('사용자 '+r.id))+'님'; wRole.textContent=ROLE[r.role];
-      wel.hidden=false; await sleep(30); wel.classList.add('in'); await sleep(1900);
+    // 열 때마다 환영 화면을 보여줘요 (방금 인증했을 때는 입력창이 먼저 사라져요)
+    if(!form.hidden){
+      if(fresh){ form.classList.add('out'); await sleep(320) }
+      form.hidden=true;
     }
+    lic.classList.remove('checking');
+    wName.textContent=(r.name?r.name:('사용자 '+r.id))+'님'; wRole.textContent=ROLE[r.role];
+    wel.hidden=false; await sleep(30); wel.classList.add('in'); await sleep(fresh?1900:1500);
     addInfo(r);
     if(r.owner) buildAdmin();
     lic.classList.remove('checking'); lic.classList.add('leaving');
@@ -1143,5 +1187,8 @@ if(typeof document!=='undefined'){
 
 </script>
 
+<script>
+(function(){ document.addEventListener('click',function(e){ var l=e.target.closest&&e.target.closest('.hd .logo,.licbox .logo'); if(!l) return; l.classList.remove('spin'); void l.offsetWidth; l.classList.add('spin'); l.addEventListener('animationend',function f(ev){ if(ev.animationName==='lgSpin'){ l.classList.remove('spin'); l.removeEventListener('animationend',f) } }) }) })();
+</script>
 </body>
 </html>
