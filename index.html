@@ -304,6 +304,19 @@
 .shhd .tb:disabled{opacity:.4}
 .ch.playing{background:color-mix(in srgb,var(--cc) 22%,transparent);box-shadow:0 0 0 1px var(--cc),0 8px 22px -8px var(--cc);transform:translateY(-2px)}
 .ch.played .r{opacity:.9}
+/* 템포 */
+.tempo{display:flex;align-items:center;gap:10px;padding:2px 2px 4px}
+.tempo .tl{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.tempo .tm{min-height:32px;min-width:34px;padding:0;font-size:18px;line-height:1}
+.tempo .tv{font-size:12.5px;color:var(--muted);min-width:68px;text-align:right;font-family:var(--mono)}
+.tempo .tv b{color:var(--gold1);font-size:15px}
+.tempo input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:28px;background:transparent;cursor:pointer}
+.tempo input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(90deg,var(--gold2) var(--fill,30%),var(--line-strong) var(--fill,30%))}
+.tempo input[type=range]::-moz-range-track{height:3px;border-radius:3px;background:var(--line-strong)}
+.tempo input[type=range]::-moz-range-progress{height:3px;border-radius:3px;background:var(--gold2)}
+.tempo input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;margin-top:-8.5px;background:var(--goldgrad);border:0;box-shadow:0 2px 10px rgba(217,185,138,.45);transition:transform .15s}
+.tempo input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--gold2);border:0}
+.tempo input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
 /* 복사 확인 · 인증 중 · 관리자 패널 */
 button.copied{color:var(--c-dia)!important;border-color:var(--c-dia)!important;animation:copyPop .45s var(--ease)}
 @keyframes copyPop{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:none}}
@@ -366,7 +379,7 @@ button.copied{color:var(--c-dia)!important;border-color:var(--c-dia)!important;a
   </header>
 
   <section class="summary" id="summary" aria-live="polite"></section>
-  <section class="sheet" id="sheetWrap"><div class="shhd"><h2>마디 악보</h2><button type="button" class="tb" id="bPlay" disabled>▶ 재생</button></div><div id="sheet"></div></section>
+  <section class="sheet" id="sheetWrap"><div class="shhd"><h2>마디 악보</h2><button type="button" class="tb" id="bPlay" disabled>▶ 재생</button></div><div class="tempo"><span class="tl">템포</span><button type="button" class="tb tm" id="bpmM" aria-label="템포 낮추기">−</button><input type="range" id="bpm" min="40" max="208" step="2" value="96" aria-label="템포 (BPM)"><button type="button" class="tb tm" id="bpmP" aria-label="템포 높이기">+</button><span class="tv"><b id="bpmV">96</b> BPM</span></div><div id="sheet"></div></section>
   <section class="input" aria-label="코드 입력">
     <div class="note jswarn" id="jsWarn"><b>버튼이 나오지 않나요?</b> 이 화면에서는 스크립트가 막혀 있어요. 카카오톡이나 파일 미리보기 대신 크롬·사파리 같은 브라우저에서 파일을 열어 주세요. 안내가 사라지면 정상이에요.</div>
     <div class="controls">
@@ -913,11 +926,22 @@ if(typeof document!=='undefined'){
   function chipOf(i){ return document.querySelector('#sheet .ch[data-i="'+i+'"]') }
   function stopPlay(){ timers.forEach(clearTimeout); timers=[]; if(playing&&master&&AC){ try{ master.gain.cancelScheduledValues(AC.currentTime); master.gain.setTargetAtTime(0,AC.currentTime,.05); setTimeout(()=>{ if(master) master.gain.value=.9 },400) }catch(e){} }
     playing=false; document.querySelectorAll('#sheet .ch.playing,#sheet .ch.played').forEach(c=>c.classList.remove('playing','played')); const b=document.getElementById('bPlay'); if(b){ b.textContent='▶ 재생'; b.classList.remove('on') } }
-  function startPlay(){ const ctx=ac(); if(!ctx) return; const seq=[]; const BEAT=60/96;
+  function startPlay(){ const ctx=ac(); if(!ctx) return; const seq=[]; const BEAT=60/bpm();
     LASTROWS.forEach(row=>row.forEach(bar=>{ const cs=bar.items.filter(x=>x.type==='chord'); cs.forEach(it=>seq.push({it,d:4*BEAT/cs.length})) })); if(!seq.length) return;
     playing=true; const b=document.getElementById('bPlay'); b.textContent='■ 정지'; b.classList.add('on'); let t=ctx.currentTime+.08, ms=80;
     seq.forEach((s,k)=>{ playChord(s.it,t,s.d); const idx=s.it.i; timers.push(setTimeout(()=>{ document.querySelectorAll('#sheet .ch.playing').forEach(c=>{ c.classList.remove('playing'); c.classList.add('played') }); const c=chipOf(idx); if(c){ c.classList.add('playing'); c.scrollIntoView({block:'nearest',behavior:'smooth'}) } },ms)); t+=s.d; ms+=s.d*1000 });
     timers.push(setTimeout(stopPlay,ms+250)) }
+  // ---- 템포 (이 기기에 기억해요)
+  const bpmEl=()=>document.getElementById('bpm');
+  function bpm(){ const e=bpmEl(); return e?Math.max(40,Math.min(208,parseInt(e.value,10)||96)):96 }
+  function paintBpm(save){ const e=bpmEl(); if(!e) return; const v=bpm(); e.value=v; document.getElementById('bpmV').textContent=v; e.style.setProperty('--fill',((v-40)/(208-40)*100)+'%'); if(save){ try{ localStorage.setItem('hs_bpm',String(v)) }catch(x){} } }
+  function setBpm(v){ const e=bpmEl(); e.value=Math.max(40,Math.min(208,v)); paintBpm(true); if(playing){ stopPlay(); startPlay() } }
+  try{ const sv=parseInt(localStorage.getItem('hs_bpm'),10); if(sv&&bpmEl()) bpmEl().value=sv }catch(x){}
+  paintBpm(false);
+  bpmEl().addEventListener('input',()=>paintBpm(true));
+  bpmEl().addEventListener('change',()=>{ if(playing){ stopPlay(); startPlay() } });
+  document.getElementById('bpmM').onclick=()=>setBpm(bpm()-4);
+  document.getElementById('bpmP').onclick=()=>setBpm(bpm()+4);
   document.addEventListener('click',e=>{ const pb=e.target.closest&&e.target.closest('#bPlay'); if(!pb) return; playing?stopPlay():startPlay() });
   // 지울 때는 코드가 먼저 사라지는 모션을 보여줘요
   document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('#bBack,#bClear'); if(!b||b.dataset.go) return; const chips=[...document.querySelectorAll('#sheet .ch')]; if(!chips.length||window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
