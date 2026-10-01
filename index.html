@@ -275,12 +275,51 @@
 .card.flash,.card{transition:box-shadow .5s var(--ease),border-color .5s var(--ease)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="anim2">
+/* 해설 카드: 스크롤로 화면에 들어올 때 차례로 떠올라요 */
+.card.rise{animation:none}
+.card.rv{opacity:0;transform:translateY(20px);transition:opacity .75s var(--ease),transform .75s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease);transition-delay:var(--d,0ms)}
+.card.rv.in{opacity:1;transform:none}
+.card.rv.in .tone{animation:toneIn .55s var(--ease) backwards;animation-delay:calc(var(--ti,0)*75ms + .35s)}
+@keyframes toneIn{from{opacity:0;transform:translateY(6px) scale(.85)}to{opacity:1;transform:none}}
+.card.rv.in dd .ok,.card.rv.in dd .no{display:inline-block;animation:resIn .8s var(--ease) .9s backwards}
+@keyframes resIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+/* 요약: 개수가 바뀌면 막대가 차올라요 */
+.lg{position:relative}
+.lg::after{content:"";position:absolute;left:8px;right:8px;bottom:2px;height:2px;border-radius:2px;background:var(--cc);transform-origin:left;transform:scaleX(var(--p,0));opacity:.85}
+.lg.chg::after{animation:barIn .8s var(--ease) backwards}
+.lg.chg b{animation:numIn .5s var(--ease)}
+@keyframes barIn{from{transform:scaleX(0)}}
+@keyframes numIn{from{transform:translateY(5px);opacity:.3}to{transform:none;opacity:1}}
+/* 코드 미리보기 */
+.prev.tick{animation:tick .38s var(--ease)}
+@keyframes tick{from{transform:scale(.96);opacity:.5;filter:blur(2px)}to{transform:none;opacity:1;filter:none}}
+/* 지우기 */
+.ch.gone{animation:goneOut .26s ease forwards;pointer-events:none}
+@keyframes goneOut{to{opacity:0;transform:translateY(-8px) scale(.85);filter:blur(3px)}}
+/* 재생 */
+.shhd{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.shhd .tb{min-height:34px;padding:0 14px;font-size:13px}
+.shhd .tb.on{background:var(--goldgrad);color:var(--accent-ink);border-color:transparent;font-weight:700}
+.shhd .tb:disabled{opacity:.4}
+.ch.playing{background:color-mix(in srgb,var(--cc) 22%,transparent);box-shadow:0 0 0 1px var(--cc),0 8px 22px -8px var(--cc);transform:translateY(-2px)}
+.ch.played .r{opacity:.9}
+/* 복사 확인 · 인증 중 · 관리자 패널 */
+button.copied{color:var(--c-dia)!important;border-color:var(--c-dia)!important;animation:copyPop .45s var(--ease)}
+@keyframes copyPop{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:none}}
+.lic.busy .logo.big{animation:lgPulse 1.1s ease-in-out infinite}
+@keyframes lgPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 8px 24px rgba(217,185,138,.14))}50%{transform:scale(1.06);filter:drop-shadow(0 8px 34px rgba(217,185,138,.5))}}
+.arw{animation:secIn .55s var(--ease) backwards;animation-delay:calc(var(--n,0)*45ms)}
+.arw.gone{animation:rowGone .32s ease forwards}
+@keyframes rowGone{to{opacity:0;transform:translateX(24px);max-height:0;padding-block:0}}
+</style>
 <style id="fbcss">
 [hidden]{display:none!important}
 #admBox{display:flex;flex-direction:column;gap:8px}
 #admBox input,.adm input,.adm textarea,.adm select{width:100%;background:var(--surface2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:16px}
 .lnk{background:none;border:0;color:var(--faint);font:inherit;font-size:12.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:10px;margin-top:2px;align-self:center}
 .lnk:hover{color:var(--accent)}
+.glink{color:var(--gold2);margin-inline:6px;text-underline-offset:3px}.glink:hover{color:var(--gold1)}
 .adm{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px;margin-top:18px}
 .adm h2{margin:0;font-size:19px}.adm h3{margin:0;font-size:15px}
 .af{display:flex;flex-direction:column;gap:6px;min-width:0}.af label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
@@ -308,6 +347,7 @@
     <button type="submit" class="tb main keyfld" id="licBtn">인증하기</button>
     <noscript><p class="licmsg" style="display:block">이 화면에서는 스크립트가 막혀 있어요. 크롬·사파리 같은 브라우저에서 열어 주세요.</p></noscript>
     <p class="lichelp keyfld">키가 없으면 발급한 사람에게 문의하세요.</p>
+    <a class="lnk" href="guide.html" style="text-decoration:none">사용 방법 보기 →</a>
   </form>
   <div class="welcome" id="welcome" hidden aria-live="polite">
     <div class="logo" role="img" aria-label=""></div>
@@ -326,7 +366,7 @@
   </header>
 
   <section class="summary" id="summary" aria-live="polite"></section>
-  <section class="sheet" id="sheetWrap"><h2>마디 악보</h2><div id="sheet"></div></section>
+  <section class="sheet" id="sheetWrap"><div class="shhd"><h2>마디 악보</h2><button type="button" class="tb" id="bPlay" disabled>▶ 재생</button></div><div id="sheet"></div></section>
   <section class="input" aria-label="코드 입력">
     <div class="note jswarn" id="jsWarn"><b>버튼이 나오지 않나요?</b> 이 화면에서는 스크립트가 막혀 있어요. 카카오톡이나 파일 미리보기 대신 크롬·사파리 같은 브라우저에서 파일을 열어 주세요. 안내가 사라지면 정상이에요.</div>
     <div class="controls">
@@ -852,19 +892,50 @@ if(typeof document!=='undefined'){
   // why 문구는 코드 기호만 끼워 넣은 템플릿이라, 코드 기호만 이스케이프
   const safe=s=>s.replace(/<(?!\/?b>)/g,'&lt;');
 
+  let PREVCNT={}, LASTROWS=[];
+  // ---- 스크롤로 들어올 때 카드 등장
+  const rvq=[]; let rvT=0;
+  const rvIO=('IntersectionObserver' in window)?new IntersectionObserver(es=>{ let k=0; es.forEach(e=>{ if(e.isIntersecting){ const c=e.target; rvIO.unobserve(c); c.style.setProperty('--d',Math.min(k++*90,360)+'ms'); requestAnimationFrame(()=>c.classList.add('in')) } }) },{threshold:.12,rootMargin:'0px 0px -6% 0px'}):null;
+  function revealCard(c){ if(rvIO) rvIO.observe(c); else c.classList.add('in') }
+  // ---- 소리: 간단한 신스로 코드를 울려요
+  let AC=null, master=null, timers=[], playing=false;
+  function ac(){ if(!AC){ const C=window.AudioContext||window.webkitAudioContext; if(!C) return null; AC=new C(); master=AC.createGain(); master.gain.value=.9; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2600; master.connect(lp); lp.connect(AC.destination) } if(AC.state==='suspended') AC.resume(); return AC }
+  const PCS={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+  function pcOf(n){ n=String(n).trim(); let p=PCS[n[0]]; if(p===undefined) return null; for(const ch of n.slice(1)){ if(ch==='#'||ch==='♯') p++; else if(ch==='b'||ch==='♭') p--; else if(ch==='x'||ch==='𝄪') p+=2 } return ((p%12)+12)%12 }
+  function chordMidi(it){ const pcs=(it.a.tones||[]).map(t=>pcOf(t.name)).filter(x=>x!==null); if(!pcs.length) return [];
+    const out=[]; let prev=36+pcs[0]; out.push(prev);   // 베이스
+    let cur=48+pcs[0]; out.push(cur);
+    for(let i=1;i<pcs.length;i++){ let m=48+pcs[i]; while(m<=cur) m+=12; out.push(m); cur=m }
+    const top=Math.max.apply(null,out); if(top>81) return out.map((m,i)=>i<2?m:m-12); return out }
+  function playChord(it,t0,dur){ const ctx=ac(); if(!ctx) return; const ns=chordMidi(it); const g=ctx.createGain(); g.connect(master);
+    const peak=.5/Math.sqrt(Math.max(1,ns.length)); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(peak,t0+.02); g.gain.exponentialRampToValueAtTime(peak*.55,t0+.35); g.gain.exponentialRampToValueAtTime(.0008,t0+dur+.25);
+    ns.forEach((m,i)=>{ const f=440*Math.pow(2,(m-69)/12); [['triangle',1,i<1?1.2:.8],['sine',2,.25]].forEach(([ty,mul,vol])=>{ const o=ctx.createOscillator(); o.type=ty; o.frequency.value=f*mul; const og=ctx.createGain(); og.gain.value=vol; o.connect(og); og.connect(g); o.start(t0); o.stop(t0+dur+.3) }) }) }
+  function chipOf(i){ return document.querySelector('#sheet .ch[data-i="'+i+'"]') }
+  function stopPlay(){ timers.forEach(clearTimeout); timers=[]; if(playing&&master&&AC){ try{ master.gain.cancelScheduledValues(AC.currentTime); master.gain.setTargetAtTime(0,AC.currentTime,.05); setTimeout(()=>{ if(master) master.gain.value=.9 },400) }catch(e){} }
+    playing=false; document.querySelectorAll('#sheet .ch.playing,#sheet .ch.played').forEach(c=>c.classList.remove('playing','played')); const b=document.getElementById('bPlay'); if(b){ b.textContent='▶ 재생'; b.classList.remove('on') } }
+  function startPlay(){ const ctx=ac(); if(!ctx) return; const seq=[]; const BEAT=60/96;
+    LASTROWS.forEach(row=>row.forEach(bar=>{ const cs=bar.items.filter(x=>x.type==='chord'); cs.forEach(it=>seq.push({it,d:4*BEAT/cs.length})) })); if(!seq.length) return;
+    playing=true; const b=document.getElementById('bPlay'); b.textContent='■ 정지'; b.classList.add('on'); let t=ctx.currentTime+.08, ms=80;
+    seq.forEach((s,k)=>{ playChord(s.it,t,s.d); const idx=s.it.i; timers.push(setTimeout(()=>{ document.querySelectorAll('#sheet .ch.playing').forEach(c=>{ c.classList.remove('playing'); c.classList.add('played') }); const c=chipOf(idx); if(c){ c.classList.add('playing'); c.scrollIntoView({block:'nearest',behavior:'smooth'}) } },ms)); t+=s.d; ms+=s.d*1000 });
+    timers.push(setTimeout(stopPlay,ms+250)) }
+  document.addEventListener('click',e=>{ const pb=e.target.closest&&e.target.closest('#bPlay'); if(!pb) return; playing?stopPlay():startPlay() });
+  // 지울 때는 코드가 먼저 사라지는 모션을 보여줘요
+  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('#bBack,#bClear'); if(!b||b.dataset.go) return; const chips=[...document.querySelectorAll('#sheet .ch')]; if(!chips.length||window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    e.stopImmediatePropagation(); e.preventDefault(); (b.id==='bClear'?chips:[chips[chips.length-1]]).forEach(c=>c.classList.add('gone')); setTimeout(()=>{ b.dataset.go='1'; b.click(); delete b.dataset.go },250) },true);
+  window.__hs={midi:chordMidi};
   let PREVSIG={}, PREVKEY='';
   function run(){
     const {rows,list,key,auto}=Engine.analyze(src.value,sel.value);
     const NEWSIG={}, fresh={}; let nk=0;
     list.forEach(it=>{ const sg=it.c.raw+'|'+it.a.roman+'|'+it.a.cat; NEWSIG[it.i]=sg; if(PREVSIG[it.i]!==sg){ fresh[it.i]=Math.min(nk++*60,480)+'ms' } });
-    PREVSIG=NEWSIG;
+    PREVSIG=NEWSIG; LASTROWS=rows; stopPlay(); { const pb=document.getElementById('bPlay'); if(pb) pb.disabled=!list.length }
     if(palHook) palHook(key,auto);
     // 요약
     const sm=$('#summary'); sm.innerHTML='';
     const kl=h('div','keyline'+((Engine.kname(key)+auto)!==PREVKEY?' chg':'')); PREVKEY=Engine.kname(key)+auto; kl.appendChild(h('span','k',esc(Engine.kname(key)))); if(auto) kl.appendChild(h('span','auto','자동 추정')); kl.appendChild(h('span','scale',esc(key.scale.join(' · '))));
     sm.appendChild(kl);
     const cnt={}; list.forEach(it=>cnt[it.a.cat]=(cnt[it.a.cat]||0)+1);
-    const lg=h('div','legend'); Object.entries(CAT).forEach(([k,[t,v]])=>{ const e=h('span','lg'+(cnt[k]?'':' zero'),esc(t)+' <b>'+(cnt[k]||0)+'</b>'); e.style.setProperty('--cc','var('+v+')'); lg.appendChild(e) });
+    const lg=h('div','legend'); const tot=Math.max(1,list.length); Object.entries(CAT).forEach(([k,[t,v]])=>{ const n=cnt[k]||0, chg=(PREVCNT[k]||0)!==n; const e=h('span','lg'+(n?'':' zero')+(chg?' chg':''),esc(t)+' <b>'+n+'</b>'); e.style.setProperty('--cc','var('+v+')'); e.style.setProperty('--p',(n/tot).toFixed(3)); if(chg&&n>0){ const bb=e.querySelector('b'), from=PREVCNT[k]||0, t0=performance.now(); const step=now=>{ const q=Math.min(1,(now-t0)/500); bb.textContent=Math.round(from+(n-from)*q); if(q<1) requestAnimationFrame(step) }; requestAnimationFrame(step) } lg.appendChild(e) }); PREVCNT=cnt;
     sm.appendChild(lg);
 
     // 개요
@@ -874,14 +945,14 @@ if(typeof document!=='undefined'){
       bar.items.forEach(it=>{ if(it.type==='key'){ cs.appendChild(h('span','kchg','→ '+esc(Engine.kname(it.key)))); return } if(it.type!=='chord') return;
         const btn=h('button','ch'); btn.type='button'; btn.style.setProperty('--cc','var('+CAT[it.a.cat][1]+')');
         btn.innerHTML='<span class="s">'+esc(it.c.raw)+'</span><span class="r">'+esc(it.a.roman)+'</span>';
-        btn.title=CAT[it.a.cat][0]; if(fresh[it.i]){ btn.classList.add('pop'); btn.style.setProperty('--d',fresh[it.i]) } btn.onclick=()=>{ const el=document.getElementById('c'+it.i); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1400) } };
+        btn.dataset.i=it.i; btn.title=CAT[it.a.cat][0]; if(fresh[it.i]){ btn.classList.add('pop'); btn.style.setProperty('--d',fresh[it.i]) } btn.onclick=()=>{ if(!playing){ const cx=ac(); if(cx) playChord(it,cx.currentTime+.02,1.4) } const el=document.getElementById('c'+it.i); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1400) } };
         cs.appendChild(btn) });
       b.appendChild(cs); r.appendChild(b) }); sh.appendChild(r) });
 
     // 상세
     const dt=$('#details'); dt.innerHTML=''; dt.appendChild(h('h2',null,'코드별 해설'));
     list.forEach(it=>{ const a=it.a;
-      const card=h('article','card'); card.id='c'+it.i; if(fresh[it.i]){ card.classList.add('rise'); card.style.setProperty('--d',fresh[it.i]) } card.style.setProperty('--cc','var('+CAT[a.cat][1]+')');
+      const card=h('article','card'); card.id='c'+it.i; if(fresh[it.i]){ card.classList.add('rv'); revealCard(card) } card.style.setProperty('--cc','var('+CAT[a.cat][1]+')');
       const l=h('div','l'); l.appendChild(h('span','where','마디 '+it.bar+' · '+esc(Engine.kname(it.key))));
       l.appendChild(h('span','sym',esc(it.c.raw))); l.appendChild(h('span','rom',esc(a.roman))); l.appendChild(h('span','chip',esc(a.label||CAT[a.cat][0])));
       const r=h('div','r'); r.appendChild(h('div','fn','<span class="rk r1">1순위</span>'+esc(a.fn||'')));
@@ -891,7 +962,7 @@ if(typeof document!=='undefined'){
           row.innerHTML='<div class="altl"><span class="rk">'+(i+2)+'순위</span><span class="altc">'+esc(o.label||CAT[o.cat][0])+'</span><b>'+esc(o.roman)+'</b></div><p>'+safe(o.why)+'</p>'; al.appendChild(row) });
         r.appendChild(al) }
       const dl=h('dl','facts');
-      const tones=a.tones.map(t=>'<span class="tone'+(a.outs.includes(t)?' out':'')+'">'+esc(t.name)+'<small>'+esc(t.iv)+'</small></span>').join('');
+      const tones=a.tones.map((t,ti)=>'<span style="--ti:'+ti+'" class="tone'+(a.outs.includes(t)?' out':'')+'">'+esc(t.name)+'<small>'+esc(t.iv)+'</small></span>').join('');
       dl.appendChild(h('dt',null,'구성음')); dl.appendChild(h('dd',null,'<div class="tones">'+tones+'</div>'));
       if(a.res){ dl.appendChild(h('dt',null,'해결')); dl.appendChild(h('dd',null,'<span class="'+(a.res.ok===true?'ok':a.res.ok===false?'no':'')+'">'+(a.res.ok===true?'✓ ':a.res.ok===false?'↷ ':'')+esc(a.res.text)+'</span>')) }
       if(a.scale){ dl.appendChild(h('dt',null,'추천 스케일')); dl.appendChild(h('dd',null,esc(a.scale))) }
@@ -977,6 +1048,7 @@ if(typeof document!=='undefined'){
     [...basesEl.children].forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===base)));
     [...tensEl.children].forEach(x=>x.setAttribute('aria-pressed',String(tens.has(x.dataset.v))));
     const c=cur(); bAdd.disabled=!c;
+    prev.classList.remove('tick'); void prev.offsetWidth; prev.classList.add('tick');
     prev.innerHTML=c?esc(fancy(root)+base.replace(/b5$/,'♭5')+TENS.filter(([k])=>tens.has(k)).map(([k,l])=>'('+l+')').join('')):'<span class="ph">뿌리음을 고르세요</span>';
     prev.dataset.sym=c;
   }
@@ -1019,7 +1091,7 @@ if(typeof document!=='undefined'){
   function fmtKey(id){ return 'HS-'+id.match(/.{4}/g).join('-') }
   function normKey(raw){ var s=(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(s.indexOf('HS')===0&&s.length===22) s=s.slice(2); return s }
   function copy(t,b){ var old=b.textContent;
-    function done(){ b.textContent='복사됨'; setTimeout(function(){ b.textContent=old },1300) }
+    function done(){ b.textContent='✓ 복사됨'; b.classList.remove('copied'); void b.offsetWidth; b.classList.add('copied'); setTimeout(function(){ b.textContent=old; b.classList.remove('copied') },1400) }
     function fb(){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy') }catch(e){} document.body.removeChild(ta); done() }
     if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done,fb); else fb() }
 
@@ -1053,7 +1125,7 @@ if(typeof document!=='undefined'){
 
   function addInfo(r){
     var p=document.createElement('p'); p.className='foot licinfo';
-    p.innerHTML='<span></span> <button type="button">로그아웃</button>';
+    p.innerHTML='<span></span> <a class="glink" href="guide.html">사용 가이드</a> <button type="button">로그아웃</button>';
     p.firstChild.textContent='라이선스 인증됨 · '+(r.name||('키 '+r.id))+' · '+ROLE[r.role]+(r.exp?' · '+r.exp+'까지':'');
     p.querySelector('button').onclick=async function(){
       ls(LS,null); ls(LC,null); ls(LA,null);
@@ -1080,10 +1152,10 @@ if(typeof document!=='undefined'){
   // ---- 키 입력 인증
   form.addEventListener('submit',async function(ev){
     ev.preventDefault();
-    say(''); btn.disabled=true; btn.textContent='확인 중…';
+    say(''); btn.disabled=true; btn.textContent='확인 중…'; lic.classList.add('busy');
     var r=await check(inp.value);
-    if(r.nf){ try{ var ar=await adminLogin(r.key); btn.disabled=false; btn.textContent='인증하기'; ls(LA,'1'); enter(ar,true); return }catch(e){ var c=String((e&&e.code)||''); r.err+=' [관리자 확인: '+(c||'오류')+']'; if(/operation-not-allowed|too-many-requests|network|api-key|configuration/.test(c)){ btn.disabled=false; btn.textContent='인증하기'; say(c==='auth/operation-not-allowed'?'Firebase에서 이메일/비밀번호 로그인이 꺼져 있어요. 콘솔 Authentication에서 켜 주세요.':c==='auth/too-many-requests'?'시도가 너무 많아요. 잠시 뒤에 다시 하세요.':'관리자 인증을 할 수 없어요 ('+c+').'); return } } }
-    btn.disabled=false; btn.textContent='인증하기';
+    if(r.nf){ try{ var ar=await adminLogin(r.key); btn.disabled=false; btn.textContent='인증하기'; lic.classList.remove('busy'); ls(LA,'1'); enter(ar,true); return }catch(e){ var c=String((e&&e.code)||''); r.err+=' [관리자 확인: '+(c||'오류')+']'; if(/operation-not-allowed|too-many-requests|network|api-key|configuration/.test(c)){ btn.disabled=false; btn.textContent='인증하기'; lic.classList.remove('busy'); say(c==='auth/operation-not-allowed'?'Firebase에서 이메일/비밀번호 로그인이 꺼져 있어요. 콘솔 Authentication에서 켜 주세요.':c==='auth/too-many-requests'?'시도가 너무 많아요. 잠시 뒤에 다시 하세요.':'관리자 인증을 할 수 없어요 ('+c+').'); return } } }
+    btn.disabled=false; btn.textContent='인증하기'; lic.classList.remove('busy');
     if(r.net){ say('서버에 연결할 수 없어요. 인터넷 연결을 확인하고 다시 시도하세요.'); return }
     if(r.err){ say(r.err); return }
     ls(LS,r.key); ls(LC,JSON.stringify({id:r.id,name:r.name,exp:r.exp,role:r.role}));
@@ -1147,18 +1219,18 @@ if(typeof document!=='undefined'){
       try{
         var s=await fs.getDocs(fs.query(fs.collection(f.db,'licenses'),fs.orderBy('no')));
         L.innerHTML=''; if(s.empty) L.appendChild(el('div','amuted','아직 발급한 키가 없어요.'));
-        s.forEach(function(d){ var v=d.data(), row=el('div','arw'+(v.revoked?' off':''));
+        var ni=0; s.forEach(function(d){ var v=d.data(), row=el('div','arw'+(v.revoked?' off':'')); row.style.setProperty('--n',ni++);
           var info=el('div','ai'); var b=el('b','',v.no+' · '+(v.name||'(이름 없음)')); var sm=el('small','',(ROLE[v.role]||'일반 유저')+(v.exp?' · '+v.exp+'까지':'')+(v.revoked?' · 중지됨':'')); info.appendChild(b); info.appendChild(sm);
           var bs=el('div','ab'); var cb=el('button','tb','키 복사'); cb.type='button'; cb.onclick=function(){ copy(fmtKey(d.id),cb) };
           var rb=el('button','tb',v.revoked?'복구':'중지'); rb.type='button'; rb.onclick=async function(){ await fs.updateDoc(fs.doc(f.db,'licenses',d.id),{revoked:!v.revoked}); refresh() };
-          var db_=el('button','tb','삭제'); db_.type='button'; var armed=false; db_.onclick=async function(){ if(!armed){ armed=true; db_.textContent='정말 삭제?'; setTimeout(function(){ armed=false; db_.textContent='삭제' },2500); return } await fs.deleteDoc(fs.doc(f.db,'licenses',d.id)); refresh() };
+          var db_=el('button','tb','삭제'); db_.type='button'; var armed=false; db_.onclick=async function(){ if(!armed){ armed=true; db_.textContent='정말 삭제?'; setTimeout(function(){ armed=false; db_.textContent='삭제' },2500); return } row.classList.add('gone'); await new Promise(function(r){ setTimeout(r,320) }); await fs.deleteDoc(fs.doc(f.db,'licenses',d.id)); refresh() };
           bs.appendChild(cb); bs.appendChild(rb); bs.appendChild(db_); row.appendChild(info); row.appendChild(bs); L.appendChild(row) });
       }catch(e){ L.innerHTML=''; L.appendChild(el('div','amuted','목록을 불러오지 못했어요. 규칙과 로그인 상태를 확인하세요.')) }
       try{
         var g=await fs.getDocs(fs.query(fs.collection(f.db,'logs'),fs.where('at','>',fs.Timestamp.fromMillis(Date.now()-864e5)),fs.orderBy('at','desc'),fs.limit(100)));
         G.innerHTML=''; if(g.empty) G.appendChild(el('div','amuted','최근 24시간 접속 기록이 없어요.'));
-        g.forEach(function(d){ var v=d.data(), t=v.at&&v.at.toDate?v.at.toDate():new Date();
-          var row=el('div','arw'); var info=el('div','ai'); info.appendChild(el('b','',(v.name||('키 '+v.no)))); info.appendChild(el('small','',t.toLocaleString('ko-KR')+' · '+(v.device||''))); row.appendChild(info); G.appendChild(row) });
+        var gi=0; g.forEach(function(d){ var v=d.data(), t=v.at&&v.at.toDate?v.at.toDate():new Date();
+          var row=el('div','arw'); row.style.setProperty('--n',gi++); var info=el('div','ai'); info.appendChild(el('b','',(v.name||('키 '+v.no)))); info.appendChild(el('small','',t.toLocaleString('ko-KR')+' · '+(v.device||''))); row.appendChild(info); G.appendChild(row) });
       }catch(e){ G.innerHTML=''; G.appendChild(el('div','amuted','기록을 불러오지 못했어요.')) }
     }
     sec.querySelector('#aRef').onclick=refresh;
